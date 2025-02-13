@@ -12,26 +12,25 @@ app.use(express.static("public"));
 app.use(express.json());
 
 let images = fs.readdirSync(IMAGE_DIR).filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
-let comparisons = [];
 let eloRatings = {};
-let totalVotes = images.length; // Each image appears exactly twice
+let userVotes = {}; // Store votes per device
 
 function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-function initializeComparisons() {
-    comparisons = [];
-    let pairings = [];
-
-    let tempImages = [...images, ...images]; // Each image appears twice
-    shuffleArray(tempImages);
-
-    for (let i = 0; i < tempImages.length; i += 2) {
-        pairings.push([tempImages[i], tempImages[i + 1]]);
+function initializeUserSession(device) {
+    if (!userVotes[device]) {
+        let shuffledImages = shuffleArray([...images, ...images]);
+        let pairings = [];
+        for (let i = 0; i < shuffledImages.length; i += 2) {
+            pairings.push([shuffledImages[i], shuffledImages[i + 1]]);
+        }
+        userVotes[device] = {
+            comparisons: pairings,
+            remainingVotes: pairings.length
+        };
     }
-
-    comparisons = shuffleArray(pairings);
 }
 
 function calculateElo(winner, loser) {
@@ -48,29 +47,37 @@ function calculateElo(winner, loser) {
     eloRatings[loser] = ratingB + K * (0 - expectedB);
 }
 
-initializeComparisons();
-
 app.get("/api/images", (req, res) => {
-    if (comparisons.length === 0) {
+    const device = req.query.device;
+    initializeUserSession(device);
+
+    let userData = userVotes[device];
+
+    if (userData.remainingVotes === 0) {
         return res.json({ finished: true });
     }
 
-    let selectedPair = comparisons.pop();
-    res.json({ images: selectedPair, remainingVotes: comparisons.length + 1 });
+    let selectedPair = userData.comparisons.pop();
+    userData.remainingVotes--;
+
+    res.json({ images: selectedPair, remainingVotes: userData.remainingVotes });
 });
 
 app.post("/api/vote", (req, res) => {
-    const { winner, loser } = req.body;
+    const { winner, loser, device } = req.body;
+    if (!device || !userVotes[device]) return res.status(400).json({ error: "Invalid device" });
+
     if (winner && loser) {
         calculateElo(winner, loser);
     }
-    res.json({ success: true });
+
+    res.json({ success: true, remainingVotes: userVotes[device].remainingVotes });
 });
 
 app.get("/api/leaderboard", (req, res) => {
     let sorted = Object.entries(eloRatings)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 20) // Top 20 candidates
+        .slice(0, 20)
         .map(([name, rating]) => ({ name, rating }));
 
     res.json(sorted);
