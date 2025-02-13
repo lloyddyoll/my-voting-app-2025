@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election 2025</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Election 2025</h1>
+    <p id="votes-remaining">Remaining Votes: <span id="votes-left">0</span></p>
+    <p>Who will you vote? Click to choose.</p>
+
+    <div id="vote-container">
+        <div class="candidate-box">
+            <img id="candidate1" src="" alt="Candidate 1">
+            <p id="name1" class="candidate-name"></p>
+        </div>
+        <div class="vs">VS</div>
+        <div class="candidate-box">
+            <img id="candidate2" src="" alt="Candidate 2">
+            <p id="name2" class="candidate-name"></p>
+        </div>
+    </div>
+
+    <p id="voting-complete-message" class="hidden">Voting is complete! Click the leaderboard to see results.</p>
+    <button id="leaderboard-button" class="hidden">Show Leaderboard</button>
+
+    <table id="leaderboard" class="hidden">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+    </table>
+
+    <script src="script.js"></script>
+</body>
+</html>
