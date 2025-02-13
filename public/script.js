@@ -17,8 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch("/api/images")
             .then(response => response.json())
             .then(data => {
-                console.log("Images Loaded:", data); // Debugging
-
                 if (data.finished) {
                     endVoting();
                     return;
@@ -41,9 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function vote(winner, loser) {
-        console.log("Vote Registered:", { winner, loser }); // Debugging
-
-        if (remainingVotes <= 0) return;
+        if (remainingVotes <= 0) return; // Prevents voting after it's done
 
         fetch("/api/vote", {
             method: "POST",
@@ -52,8 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(response => {
             if (!response.ok) throw new Error("Vote submission failed");
-            if (!response.ok) throw new Error("Vote submission failed");
-return response.text(); // No need to parse JSON
+            return response.json();
         })
         .then(() => {
             remainingVotes--;
@@ -83,9 +78,7 @@ return response.text(); // No need to parse JSON
         fetch("/api/leaderboard")
             .then(response => response.json())
             .then(data => {
-                console.log("Leaderboard Data:", data); // Debugging
-
-                leaderboardBody.innerHTML = data.slice(0, 20).map((candidate, index) => `
+                leaderboardBody.innerHTML = data.map((candidate, index) => `
                     <tr>
                         <td>${index + 1}</td>
                         <td><img src="/images/${candidate.name}" width="50"></td>
