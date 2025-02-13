@@ -14,16 +14,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPair = [];
 
     function loadImages() {
+        if (localStorage.getItem("hasVoted")) {
+            endVoting();
+            return;
+        }
+
         fetch("/api/images")
             .then(response => response.json())
             .then(data => {
+                console.log("Images Loaded:", data);
+
                 if (data.finished) {
                     endVoting();
                     return;
                 }
 
                 currentPair = [data.images[0], data.images[1]];
-
                 candidate1.src = `/images/${data.images[0]}`;
                 candidate2.src = `/images/${data.images[1]}`;
                 name1.textContent = data.images[0].split(".")[0];
@@ -39,7 +45,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function vote(winner, loser) {
-        if (remainingVotes <= 0) return; // Prevents voting after it's done
+        console.log("Vote Registered:", { winner, loser });
+
+        if (remainingVotes <= 0 || localStorage.getItem("hasVoted")) {
+            console.log("You have already voted on this device.");
+            return;
+        }
 
         fetch("/api/vote", {
             method: "POST",
@@ -48,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(response => {
             if (!response.ok) throw new Error("Vote submission failed");
-            return response.json();
+            return response.text();
         })
         .then(() => {
             remainingVotes--;
@@ -58,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 loadImages();
             } else {
                 endVoting();
+                localStorage.setItem("hasVoted", "true");
             }
         })
         .catch(error => console.error("Error submitting vote:", error));
@@ -78,6 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch("/api/leaderboard")
             .then(response => response.json())
             .then(data => {
+                console.log("Leaderboard Data:", data);
+
                 leaderboardBody.innerHTML = data.map((candidate, index) => `
                     <tr>
                         <td>${index + 1}</td>

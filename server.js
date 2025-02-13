@@ -4,9 +4,8 @@ const path = require("path");
 const compression = require("compression");
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Use Render’s port if available
+const PORT = 3000;
 const IMAGE_DIR = path.join(__dirname, "public", "images");
-const DATA_FILE = path.join(__dirname, "data.json");
 
 app.use(compression());
 app.use(express.static("public"));
@@ -21,16 +20,11 @@ function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-// Load saved rankings if available
-if (fs.existsSync(DATA_FILE)) {
-    eloRatings = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
-}
-
 function initializeComparisons() {
     comparisons = [];
     let pairings = [];
 
-    let tempImages = [...images, ...images]; // Ensure each image appears twice
+    let tempImages = [...images, ...images]; // Each image appears twice
     shuffleArray(tempImages);
 
     for (let i = 0; i < tempImages.length; i += 2) {
@@ -52,9 +46,6 @@ function calculateElo(winner, loser) {
 
     eloRatings[winner] = ratingA + K * (1 - expectedA);
     eloRatings[loser] = ratingB + K * (0 - expectedB);
-
-    // Save updated rankings
-    fs.writeFileSync(DATA_FILE, JSON.stringify(eloRatings, null, 2));
 }
 
 initializeComparisons();
@@ -70,18 +61,16 @@ app.get("/api/images", (req, res) => {
 
 app.post("/api/vote", (req, res) => {
     const { winner, loser } = req.body;
-    if (!winner || !loser) {
-        return res.status(400).json({ error: "Invalid vote submission" });
+    if (winner && loser) {
+        calculateElo(winner, loser);
     }
-
-    calculateElo(winner, loser);
     res.json({ success: true });
 });
 
 app.get("/api/leaderboard", (req, res) => {
     let sorted = Object.entries(eloRatings)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 20) // Show top 20
+        .slice(0, 20) // Top 20 candidates
         .map(([name, rating]) => ({ name, rating }));
 
     res.json(sorted);
