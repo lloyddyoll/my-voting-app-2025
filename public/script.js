@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let currentPair = [];
 
-    // Generate a unique session ID for each device
     function getDeviceId() {
         let deviceId = localStorage.getItem("device_id");
         if (!deviceId) {
@@ -52,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch("/api/vote", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ winner, loser, device: deviceId }) // Include device ID
+            body: JSON.stringify({ winner, loser, device: deviceId })
         })
         .then(response => response.json())
         .then(data => {
@@ -75,6 +74,18 @@ document.addEventListener("DOMContentLoaded", () => {
         votingCompleteMessage.classList.remove("hidden");
         leaderboardButton.classList.remove("hidden");
         votesLeft.textContent = "Remaining Votes: 0";
+
+        // Hide the images so users can't click them after voting
+        candidate1.style.display = "none";
+        candidate2.style.display = "none";
+
+        // Hide the candidate names
+        name1.style.display = "none";
+        name2.style.display = "none";
+
+        // Remove click events to prevent extra votes
+        candidate1.onclick = null;
+        candidate2.onclick = null;
     }
 
     leaderboardButton.addEventListener("click", () => {
