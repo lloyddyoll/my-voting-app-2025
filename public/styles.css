@@ -111,7 +111,7 @@ th {
 .sticky-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures the image covers the entire area without distortion */
+    object-fit: contain; /* Ensures the entire image is visible */
 }
 
 /* Mobile Responsiveness */
@@ -125,7 +125,7 @@ th {
     }
 
     .sticky-image {
-        height: 50vh; /* Reduce the height of the image on small screens */
+        height: auto; /* Let the image resize naturally on small screens */
         width: 100%;
     }
 }
