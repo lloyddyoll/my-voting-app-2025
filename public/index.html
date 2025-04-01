@@ -7,55 +7,61 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Election 2025</h1>
-<p>PRO DIVORCE
-1. Lito Lapid, 2. Risa Hontiveros, 3. Raffy Tulfo, 4. Robinhood Padilla, 5.Pia Cayetano, 6. Imee Marcos, 7. Loren Legarda, 8. Panfilo Lacson</p>
-<p>
-ANTI-DIVORCE.
-1. Bong Revilla, 2.Bong Go, 3. Mark Villar, 4. Migz Zubiri, 5. Vic Rodriguez, 6. Bongbong Marcos</p>
+    <div class="container">
+        <!-- Left side: Voting UI -->
+        <div class="left-side">
+            <h1>Election 2025</h1>
 
-    <p id="votes-remaining">Remaining Votes: <span id="votes-left">0</span></p>
-    <p>Who will you vote? Click to choose.</p>
+            <p id="votes-remaining">Remaining Votes: <span id="votes-left">0</span></p>
+            <p>Who will you vote for? Click to choose.</p>
 
-    <div id="vote-container">
-        <div class="candidate-box">
-            <img id="candidate1" src="" alt="Candidate 1">
-            <p id="name1" class="candidate-name"></p>
+            <div id="vote-container">
+                <div class="candidate-box">
+                    <img id="candidate1" src="" alt="Candidate 1">
+                    <p id="name1" class="candidate-name"></p>
+                </div>
+                <div class="vs">VS</div>
+                <div class="candidate-box">
+                    <img id="candidate2" src="" alt="Candidate 2">
+                    <p id="name2" class="candidate-name"></p>
+                </div>
+            </div>
+
+            <p id="voting-complete-message" class="hidden">Voting is complete! Click the leaderboard to see results.</p>
+            <button id="leaderboard-button" class="hidden">Show Leaderboard</button>
+
+            <table id="leaderboard" class="hidden">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Rating</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+
+            <p>
+            # ----------------------------------------------------------------------
+            # DISCLAIMER:
+            # This program is intended for survey use only. 
+            # It is designed solely for collecting opinions and data for the 
+            # purposes of conducting surveys. Any other use outside of this 
+            # context is not permitted. The results gathered are not legally 
+            # binding and are strictly for informational and analysis purposes.
+            # ----------------------------------------------------------------------
+            </p>
         </div>
-        <div class="vs">VS</div>
-        <div class="candidate-box">
-            <img id="candidate2" src="" alt="Candidate 2">
-            <p id="name2" class="candidate-name"></p>
+
+        <!-- Right side: Image -->
+        <div class="right-side">
+            <div class="sticky-image">
+                <img src="procons.jpg" alt="Procons Image">
+            </div>
         </div>
     </div>
 
-    <p id="voting-complete-message" class="hidden">Voting is complete! Click the leaderboard to see results.</p>
-    <button id="leaderboard-button" class="hidden">Show Leaderboard</button>
-
-    <table id="leaderboard" class="hidden">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Rating</th>
-            </tr>
-        </thead>
-        <tbody id="leaderboard-body"></tbody>
-    </table>
-
     <script src="script.js"></script>
-
-
-<p>
-# ----------------------------------------------------------------------
-# DISCLAIMER:
-# This program is intended for survey use only. 
-# It is designed solely for collecting opinions and data for the 
-# purposes of conducting surveys. Any other use outside of this 
-# context is not permitted. The results gathered are not legally 
-# binding and are strictly for informational and analysis purposes.
-# ----------------------------------------------------------------------
-</p>
-</head>
 </body>
+</html>

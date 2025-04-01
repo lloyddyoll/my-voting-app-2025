@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const compression = require("compression");
+const requestIp = require("request-ip");
 
 const app = express();
 const PORT = 3000;
@@ -10,6 +11,7 @@ const IMAGE_DIR = path.join(__dirname, "public", "images");
 app.use(compression());
 app.use(express.static("public"));
 app.use(express.json());
+app.use(requestIp.mw());
 
 let images = fs.readdirSync(IMAGE_DIR).filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
 let eloRatings = {};
@@ -48,12 +50,13 @@ function calculateElo(winner, loser) {
 }
 
 app.get("/api/images", (req, res) => {
-    const device = req.query.device;
+    const device = req.query.device || req.clientIp;
     initializeUserSession(device);
 
     let userData = userVotes[device];
 
-    if (userData.remainingVotes === 0) {
+    // ✅ Prevent sending more images when voting is done
+    if (userData.remainingVotes === 0 || userData.comparisons.length === 0) {
         return res.json({ finished: true });
     }
 
